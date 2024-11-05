@@ -4,5 +4,9 @@ import './assets/main.css'
 
 import { createApp } from 'vue'
 import App from './App.vue'
+import router from "./router/router.js";
 
-createApp(App).use(createVuestic()).mount('#app')
+createApp(App)
+    .use(createVuestic())
+    .use(router)
+    .mount('#app')

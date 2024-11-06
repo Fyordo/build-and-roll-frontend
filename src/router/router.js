@@ -4,6 +4,7 @@ import Auth from "@/pages/auth/Auth.vue";
 import Profile from "@/pages/profile/Profile.vue";
 import Constructor from "@/pages/constructor/Constructor.vue";
 import Spells from "@/pages/spells/Spells.vue";
+import Weapons from "@/pages/weapons/Weapons.vue";
 
 
 const routes = [
@@ -32,9 +33,13 @@ const routes = [
         }),
     },
     {
-        path: '/weapon',
-        component: Constructor,
-        name: 'Constructor'
+        path: '/weapons',
+        component: Weapons,
+        name: 'Weapons',
+        props: (route) => ({
+            ...route.params,
+            ...route.query,
+        }),
     },
     {
         path: '/room',

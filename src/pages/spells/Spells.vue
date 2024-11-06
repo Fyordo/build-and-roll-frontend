@@ -3,6 +3,13 @@ import {defineComponent} from "vue";
 import {allSpells} from "@/assets/allSpells.js";
 
 export default defineComponent({
+  computed: {
+    pages() {
+      return this.perPage && this.perPage !== 0
+          ? Math.ceil(this.items.length / this.perPage)
+          : this.items.length;
+    },
+  },
   data() {
     const items = allSpells.map((e) => {
       return e.ru;
@@ -16,18 +23,52 @@ export default defineComponent({
       {key: "actions", label: "Допольнительная информация", width: 80},
     ];
 
+    const perPage = 10;
+    const currentPage = 1;
+    const filter = "";
+
     return {
       items,
-      columns
+      columns,
+      perPage,
+      currentPage,
+      filter
     };
   },
 });
 </script>
 
 <template>
+  <div class="grid sm:grid-cols-2 md:grid-cols-5 gap-10 mb-6">
+    <VaInput
+        v-model.number="perPage"
+        type="number"
+        placeholder="Кол-во..."
+        label="Элементов на странице"
+        style="margin-right: 10px"
+    />
+    <VaInput
+        v-model.number="currentPage"
+        type="number"
+        placeholder="Страница..."
+        label="Текущая страница"
+        style="margin-right: 10px"
+    />
+    <VaInput
+        v-model="filter"
+        class="sm:col-span-2 md:col-span-3"
+        placeholder="Название..."
+        label="Фильтр"
+        style="margin-right: 10px"
+    />
+  </div>
   <VaDataTable
       :items="items"
       :columns="columns"
+      :per-page="perPage"
+      :current-page="currentPage"
+      :filter="filter"
+      @filtered="filtered = $event.items"
   >
     <template #cell(actions)="{ row, isExpanded }">
       <VaButton
@@ -70,6 +111,18 @@ export default defineComponent({
           </div>
         </div>
       </div>
+    </template>
+    <template #bodyAppend>
+      <tr>
+        <td colspan="6">
+          <div class="flex justify-center mt-4">
+            <VaPagination
+                v-model="currentPage"
+                :pages="pages"
+            />
+          </div>
+        </td>
+      </tr>
     </template>
   </VaDataTable>
 </template>

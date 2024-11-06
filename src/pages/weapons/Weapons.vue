@@ -1,36 +1,47 @@
 <script>
 import { defineComponent } from "vue";
+import axiosAgregator from "@/server/axiosAgregator.js";
 
 export default defineComponent({
-  computed: {
-    pages() {
-      return this.perPage && this.perPage !== 0
-          ? Math.ceil(this.items.length / this.perPage)
-          : this.items.length;
+  mounted() {
+    this.loadData();
+  },
+  watch: {
+    currentPage() {
+      this.loadData();
     },
+    perPage() {
+      this.loadData();
+    },
+    selectedType() {
+      this.loadData();
+    },
+    filter() {
+      this.loadData();
+    }
+  },
+  methods: {
+    loadData(){
+      let path = `/api/v1/lib/weapon/all?page=${this.currentPage}&perPage=${this.perPage}`;
+      if (this.selectedType !== undefined){
+        path += `&type=${this.selectedType}`;
+      }
+      if (this.filter.length > 0){
+        path += `&search=${this.filter}`;
+      }
+      axiosAgregator.sendGet(path)
+          .then(response => {
+            console.log(response.data);
+            this.items = response.data;
+          })
+    }
   },
   data() {
-    const items = [
-      {
-        name: "Elven Lightblade",
-        weaponType: "Melee",
-        properties: {
-          cost: "50 gp",
-          damage: "1d6",
-          damageType: "piercing",
-          weight: "1 lb",
-          additionalData: [
-            "Finesse",
-            "Light",
-            "Special"
-          ]
-        },
-      }
-    ];
+    const items = [];
 
     const columns = [
       { key: "name", label: "Название", sortable: true },
-      { key: "weaponType", label: "Тип оружия", sortable: true },
+      { key: "type", label: "Тип оружия", sortable: true },
       { key: "actions", label: "Допольнительная информация", sortable: true, width: 80 },
     ];
 
@@ -38,7 +49,7 @@ export default defineComponent({
     const currentPage = 1;
     const filter = "";
     const selectedType = undefined;
-    const weaponTypes = ["Melee", "Range"];
+    const types = ["Melee", "Ranged"];
 
     return {
       items,
@@ -47,7 +58,7 @@ export default defineComponent({
       currentPage,
       filter,
       selectedType,
-      weaponTypes
+      types
     };
   },
 });
@@ -82,16 +93,13 @@ export default defineComponent({
   <div class="grid sm:grid-cols-2 gap-6 mb-6">
     <VaSelect
         v-model="selectedType"
-        label="Уровень"
-        :options="weaponTypes"
+        label="Тип оружия"
+        :options="types"
     />
   </div>
   <VaDataTable
       :items="items"
       :columns="columns"
-      :per-page="perPage"
-      :current-page="currentPage"
-      :filter="filter"
       @filtered="filtered = $event.items"
   >
     <template #cell(actions)="{ row, isExpanded }">
@@ -109,38 +117,26 @@ export default defineComponent({
       <div class="flex gap-2">
         <div class="pl-2">
           <div class="flex gap-1">
-            <span><b>Цена:</b> {{ rowData.properties.cost }}</span>
+            <span><b>Цена:</b> {{ rowData.properties.Cost }}</span>
           </div>
           <br>
           <div class="flex items-center">
-            <span><b>Урон:</b> {{ rowData.properties.damage }}</span>
+            <span><b>Урон:</b> {{ rowData.properties.Damage }}</span>
           </div>
           <br>
           <div class="flex items-center">
-            <span><b>Тип урона:</b> {{ rowData.properties.damageType }}</span>
+            <span><b>Тип урона:</b> {{ rowData.properties.DamageType }}</span>
           </div>
           <br>
           <div class="flex items-center">
-            <span><b>Вес:</b> {{ rowData.properties.weight }}</span>
+            <span><b>Вес:</b> {{ rowData.properties.Weight }}</span>
           </div>
           <br>
           <div class="flex items-center">
-            <span><b>Дополнительные данные:</b> {{ rowData.properties.additionalData.join(', ') }}</span>
+            <span><b>Дополнительные данные:</b> {{ rowData.properties.Properties.join(', ') }}</span>
           </div>
         </div>
       </div>
-    </template>
-    <template #bodyAppend>
-      <tr>
-        <td colspan="6">
-          <div class="flex justify-center mt-4">
-            <VaPagination
-                v-model="currentPage"
-                :pages="pages"
-            />
-          </div>
-        </td>
-      </tr>
     </template>
   </VaDataTable>
 </template>

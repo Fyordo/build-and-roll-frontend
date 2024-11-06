@@ -22,9 +22,9 @@ export default defineComponent({
     ];
 
     const columns = [
-      { key: "name" },
-      { key: "weaponType" },
-      { key: "actions", width: 80 },
+      { key: "name", label: "Название", sortable: true },
+      { key: "weaponType", label: "Тип оружия", sortable: true },
+      { key: "actions", label: "Допольнительная информация", sortable: true, width: 80 },
     ];
 
     return {
@@ -47,7 +47,7 @@ export default defineComponent({
           class="w-full"
           @click="row.toggleRowDetails()"
       >
-        {{ isExpanded ? 'Hide': 'More info' }}
+        {{ isExpanded ? 'Закрыть': 'Открыть' }}
       </VaButton>
     </template>
 

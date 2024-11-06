@@ -23,8 +23,13 @@ onMounted(async () => {
   rooms.value = response.data; // Присваиваем полученные данные
 });
 
-const joinRoom = (id) => {
-  router.push(`/room/${id}`); // Используем id для перехода в нужную комнату
+const joinRoom = async (roomId) => {
+  const userId = localStorage.getItem('userId');
+  await axiosAgregator.sendPost("/api/v1/room/add_user", {
+    userId: userId,
+    roomId: roomId,
+  });
+  router.push(`/room/${roomId}`); // Используем id для перехода в нужную комнату
 };
 </script>
 

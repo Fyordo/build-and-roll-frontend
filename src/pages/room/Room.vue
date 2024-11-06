@@ -18,6 +18,13 @@
       <p>Загрузка данных о комнате...</p>
     </div>
 
+    <div v-if="users.length > 0" class="user-list">
+      <h4>Пользователи в комнате:</h4>
+      <ul>
+        <li v-for="(user, index) in users" :key="index">{{ user.username }}</li>
+      </ul>
+    </div>
+
     <div v-if="errorMessage" class="error-message">
       <p>{{ errorMessage }}</p>
     </div>
@@ -42,45 +49,106 @@ const router = useRouter();
 
 const room = ref(null);
 const notifications = ref([]);
+let users = ref([]);
+let roomId = ref(null);
+const authUserId = localStorage.getItem("userId");
+const pusher = new Pusher('61cebc6ceca8652470ef', {
+  cluster: 'eu',
+});
+let channel = ref(null);
+let messages = ref([]);
+
 
 const loadRoomData = async (id) => {
   const response = await axiosAgregator.sendGet(`/api/v1/room/${id}`);
-  room.value = response.data; // Присваиваем полученные данные
+
+  const authUser = {
+    id: authUserId,
+    username: localStorage.getItem("username"),
+  };
+
+  addUser(authUser);
+  room.value = response.data;
 };
+
 const enablePusher = async(id) => {
-  const pusher = new Pusher('61cebc6ceca8652470ef', {
-    cluster: 'eu',
+  channel = pusher.subscribe(`room_${id}_channel`);
+  channel.bind('USER_JOINED', function(data) {
+    const user = data.user;
+    addUser(user);
   });
 
-  const channel = pusher.subscribe(`room_${id}_channel`);
-  console.log(`room_${id}_channel`)
+  channel.bind('USER_LEFT', function(data) {
+    const user = data.user;
+    removeUser(user);
+  });
 
-  channel.bind('USER_JOINED', function(data) {
-    const user = data.user.username;
-    addNotification(`${user} подключился к комнате`);
+  await channel.bind('UPDATE_USERS', function(data) {
+    const user = data.user;
+    console.log("+++++")
+    console.log(data.users)
+
+    if(user.id.toString() === authUserId){
+      data.users.forEach(newUser => {
+        if (!users.value.some(existingUser => existingUser.username === newUser.username)) {
+          users.value.push(newUser);
+        }
+      });
+    }
   });
 };
 
-const addNotification = (message) => {
-  if (notifications.value.length < 3) { // Ограничение до 3 уведомлений
-    notifications.value.push(message); // Добавляем сообщение в массив уведомлений
-    setTimeout(() => {
-      notifications.value.shift(); // Удаляем первое уведомление через 10 секунд
-    }, 5000);
+const addUser = async (user) => {
+  if (!users.value.some(existingUser => existingUser.id === user.id)) {
+    if (user.id !== authUserId) {
+      addNotification(`${user.username} подключился к комнате`);
+      console.log("------");
+      await axiosAgregator.sendPost(`/api/v1/room/${roomId}/send_users`, {
+        users : users.value,
+        user: user
+      });
+    }
+    users.value.push(user);
   }
 };
 
+const removeUser = (user) => {
+  const userIndex = users.value.findIndex(existingUser => existingUser.id === user.id);
+  if (userIndex !== -1) {
+    addNotification(`${user.username} вышел из комнаты`);
+    users.value.splice(userIndex, 1);
+  }
+};
 
+const addNotification = (message) => {
+  if (notifications.value.length < 3) {
+    notifications.value.push(message);
+    setTimeout(() => {
+      notifications.value.shift();
+    }, 10000);
+  }
+};
+
+const addMessage = (message) => {
+  this.messages.push(message);
+};
 
 onMounted(() => {
-  const roomId = route.params.id;
+  roomId = route.params.id;
   enablePusher(roomId);
   loadRoomData(roomId);
 });
 
-const leaveRoom = () => {
+const leaveRoom = async () => {
+  const userId = localStorage.getItem("userId");
+  await axiosAgregator.sendPost("/api/v1/room/remove_user", {
+    userId: userId,
+    roomId: roomId,
+  });
   router.push('/room');
 };
+
+
 </script>
 
 <style scoped>

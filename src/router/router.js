@@ -8,6 +8,7 @@ import Spells from "@/pages/spells/Spells.vue";
 import Weapons from "@/pages/weapons/Weapons.vue";
 import RoomList from "@/pages/room/RoomList.vue";
 import Room from "@/pages/room/Room.vue";
+import Register from "@/pages/auth/Register.vue";
 
 
 const routes = [
@@ -15,6 +16,11 @@ const routes = [
         path: '/auth',
         component: Auth,
         name: 'Auth'
+    },
+    {
+        path: '/register',
+        component: Register,
+        name: 'Register'
     },
     {
         path: '/profile',

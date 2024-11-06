@@ -11,15 +11,20 @@ const breakpoints = useBreakpoint()
 
 const sidebarRoutes = [
   {title: "Конструктор", link: "/constructor", icon: "dataset", active: true},
- ];
+  {title: "Заклинания", link: "/spells", icon: "star", active: true},
+  {title: "Оружие", link: "/weapons", icon: "colorize", active: true},
+  {title: "Комната", link: "/room", icon: "house", active: true},
+];
 
-import { computed } from 'vue';
-import { useColors } from "vuestic-ui";
+import {computed} from 'vue';
+import {useColors} from "vuestic-ui";
 
-const { applyPreset, currentPresetName } = useColors();
+const {applyPreset, currentPresetName} = useColors();
 
 const switchValue = computed({
-  get() { return currentPresetName.value },
+  get() {
+    return currentPresetName.value
+  },
   set(value) {
     localStorage.setItem('theme', value)
     applyPreset(value)
@@ -33,7 +38,6 @@ onMounted(() => {
     applyPreset(savedTheme);
   }
 });
-
 
 
 </script>
@@ -71,7 +75,8 @@ onMounted(() => {
       <VaSidebar
           :minimized="!showSidebar"
           minimized-width="60px">
-        <SidebarItem v-for="item in sidebarRoutes" :title="item.title" :link="item.link" :icon="item.icon" :active="item.active" />
+        <SidebarItem v-for="item in sidebarRoutes" :title="item.title" :link="item.link" :icon="item.icon"
+                     :active="item.active"/>
         <VaSpacer/>
         <SidebarItem v-if="isAuth" title="Профиль" link="/profile" icon="person" active/>
         <SidebarItem v-else title="Авторизация" link="/auth" icon="person" active/>

@@ -13,6 +13,14 @@ const user = ref({
 const errorMessage = ref('');
 const successMessage = ref('');
 const router = useRouter();
+
+const logout = () => {
+
+  localStorage.removeItem('access_token')
+  router.push('/login').then(() => {
+    location.reload();
+  });
+};
 </script>
 
 <template>
@@ -27,6 +35,7 @@ const router = useRouter();
       <VaInput v-model="user.email" label="Email" type="email" placeholder="Введите ваш email" />
 
       <VaButton @click="updateUserData" color="primary">Сохранить изменения</VaButton>
+      <VaButton @click="logout" color="danger">Выйти</VaButton> <!-- Кнопка выхода -->
 
       <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
       <div v-if="successMessage" class="success-message">{{ successMessage }}</div>

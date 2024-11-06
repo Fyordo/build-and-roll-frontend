@@ -12,30 +12,20 @@ const router = useRouter();
 
 const handleLogin = async () => {
   errorMessage.value = ''; // Сброс сообщения об ошибке
+  const response = await axiosAgregator.sendPost("/api/v1/auth/login", {
+    username: "sdf",
+    password: "dsf",
+  });
 
-  localStorage.setItem("token", 'token');
-  router.push("/");
-  // try {
-  //   // const response = await axiosAgregator.sendPost("/auth/login", {
-  //   //   login: email,
-  //   //   password: password,
-  //   // });
-  //
-  //
-  //   // if (response.status === 200 && response.data.token) {
-  //   //   localStorage.setItem("jwt", response.data.token);
-  //   //   localStorage.setItem("userId", response.data.id);
-  //   //   this.$router.push("/shelf");
-  //   // } else {
-  //   //   alert("Сервер тупит");
-  //   // }
-  // } catch (error) {
-  //   if (error.response && error.response.status === 400) {
-  //     alert("Неверно введены данные");
-  //   } else {
-  //     alert("Произошла вот эта жопа:", error);
-  //   }
-  // }
+  if (response.status === 200 && response.data.accessToken) {
+    localStorage.setItem("access_token", response.data.accessToken);
+    localStorage.setItem("refresh_token", response.data.refreshToken);
+    router.push('/').then(() => {
+      location.reload();
+    });
+  } else {
+    alert("Сервер тупит");
+  }
 };
 
 </script>

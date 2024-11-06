@@ -5,6 +5,7 @@ import Profile from "@/pages/profile/Profile.vue";
 import Constructor from "@/pages/constructor/Constructor.vue";
 import Spells from "@/pages/spells/Spells.vue";
 import Weapons from "@/pages/weapons/Weapons.vue";
+import Room from "@/pages/room/Room.vue";
 
 
 const routes = [
@@ -43,8 +44,8 @@ const routes = [
     },
     {
         path: '/room',
-        component: Constructor,
-        name: 'Constructor'
+        component: Room,
+        name: 'Room'
     }
 ]
 

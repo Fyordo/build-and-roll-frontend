@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Auth from "@/pages/auth/Auth.vue";
 import Profile from "@/pages/profile/Profile.vue";
 import Constructor from "@/pages/constructor/Constructor.vue";
+import Spells from "@/pages/spells/Spells.vue";
 
 
 const routes = [
@@ -21,6 +22,25 @@ const routes = [
         component: Constructor,
         name: 'Constructor'
     },
+    {
+        path: '/spells',
+        component: Spells,
+        name: 'Spells',
+        props: (route) => ({
+            ...route.params,
+            ...route.query,
+        }),
+    },
+    {
+        path: '/weapon',
+        component: Constructor,
+        name: 'Constructor'
+    },
+    {
+        path: '/room',
+        component: Constructor,
+        name: 'Constructor'
+    }
 ]
 
 const router = createRouter({

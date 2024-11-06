@@ -2,7 +2,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Auth from "@/pages/auth/Auth.vue";
 import Profile from "@/pages/profile/Profile.vue";
-import Constructor from "@/pages/constructor/Constructor.vue";
+import Constructor from "@/pages/characters/Constructor.vue";
+import CharactersPage from "@/pages/characters/CharactersPage.vue";
 import Spells from "@/pages/spells/Spells.vue";
 import Weapons from "@/pages/weapons/Weapons.vue";
 import Room from "@/pages/room/Room.vue";
@@ -18,6 +19,11 @@ const routes = [
         path: '/profile',
         component: Profile,
         name: 'Profile'
+    },
+    {
+        path: '/characters',
+        component: CharactersPage,
+        name: 'CharactersPage'
     },
     {
         path: '/constructor',

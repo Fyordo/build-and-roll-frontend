@@ -11,7 +11,7 @@ let isAuth = localStorage.getItem('access_token') !== null;
 const breakpoints = useBreakpoint()
 
 const sidebarRoutes = [
-  {title: "Конструктор", link: "/constructor", icon: "dataset", active: true},
+  {title: "Листы персонажей", link: "/characters", icon: "dataset", active: true},
   {title: "Заклинания", link: "/spells", icon: "star", active: true},
   {title: "Оружие", link: "/weapons", icon: "colorize", active: true},
   {title: "Комната", link: "/room", icon: "house", active: true},

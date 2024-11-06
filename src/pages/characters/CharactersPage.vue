@@ -60,10 +60,10 @@ export default defineComponent({
     ];
 
     const columns = [
-      {key: "name", label: "Имя персонажа", sortable: true},
-      {key: "race", label: "Раса персонажа", sortable: true},
-      {key: "class", label: "Класс персонажа", sortable: true},
-      {key: "level", label: "Уровень персонажа", sortable: true},
+      {key: "name", label: "Имя персонажа", sortable: false},
+      {key: "race", label: "Раса персонажа", sortable: false},
+      {key: "class", label: "Класс персонажа", sortable: false},
+      {key: "level", label: "Уровень персонажа", sortable: false},
     ];
 
     return {

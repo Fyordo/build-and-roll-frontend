@@ -16,10 +16,10 @@ export default defineComponent({
     });
 
     const columns = [
-      {key: "level", label: "Уровень", sortable: true},
-      {key: "name", label: "Название", sortable: true},
-      {key: "school", label: "Школа", sortable: true},
-      {key: "range", label: "Дальность", sortable: true},
+      {key: "level", label: "Уровень", sortable: false},
+      {key: "name", label: "Название", sortable: false},
+      {key: "school", label: "Школа", sortable: false},
+      {key: "range", label: "Дальность", sortable: false},
       {key: "actions", label: "Допольнительная информация", width: 80},
     ];
 

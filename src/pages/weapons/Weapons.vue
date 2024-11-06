@@ -22,7 +22,7 @@ export default defineComponent({
   },
   methods: {
     loadData(){
-      let path = `/api/v1/lib/weapon/all?page=${this.currentPage}&perPage=${this.perPage}`;
+      let path = `/api/v1/lib/weapon?page=${this.currentPage}&perPage=${this.perPage}`;
       if (this.selectedType !== undefined){
         path += `&type=${this.selectedType}`;
       }
@@ -40,9 +40,9 @@ export default defineComponent({
     const items = [];
 
     const columns = [
-      { key: "name", label: "Название", sortable: true },
-      { key: "type", label: "Тип оружия", sortable: true },
-      { key: "actions", label: "Допольнительная информация", sortable: true, width: 80 },
+      { key: "name", label: "Название", sortable: false },
+      { key: "type", label: "Тип оружия", sortable: false },
+      { key: "actions", label: "Допольнительная информация", sortable: false, width: 80 },
     ];
 
     const perPage = 10;

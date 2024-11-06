@@ -55,19 +55,23 @@ export default defineComponent({
       <div class="flex gap-2">
         <div class="pl-2">
           <div class="flex gap-1">
-            <span>Цена: {{ rowData.properties.cost }}</span>
+            <span><b>Цена:</b> {{ rowData.properties.cost }}</span>
           </div>
+          <br>
           <div class="flex items-center">
-            <span>Урон: {{ rowData.properties.damage }}</span>
+            <span><b>Урон:</b> {{ rowData.properties.damage }}</span>
           </div>
+          <br>
           <div class="flex items-center">
-            <span>Тип урона: {{ rowData.properties.damageType }}</span>
+            <span><b>Тип урона:</b> {{ rowData.properties.damageType }}</span>
           </div>
+          <br>
           <div class="flex items-center">
-            <span>Вес: {{ rowData.properties.weight }}</span>
+            <span><b>Вес:</b> {{ rowData.properties.weight }}</span>
           </div>
+          <br>
           <div class="flex items-center">
-            <span>Дополнительные данные: {{ rowData.properties.additionalData.join(', ') }}</span>
+            <span><b>Дополнительные данные:</b> {{ rowData.properties.additionalData.join(', ') }}</span>
           </div>
         </div>
       </div>

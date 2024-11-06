@@ -42,28 +42,31 @@ export default defineComponent({
 
     <template #expandableRow="{ rowData }">
       <div class="flex gap-2">
-        <div class="pl-2">
+        <div class="pl-2 spells-container">
           <div class="flex items-center">
               <span>
-                <div class="long-text">
-                  Описание: {{ rowData.text }}
-                </div>
+                  <b>Описание:</b> {{ rowData.text }}
               </span>
           </div>
+          <br>
           <div class="flex items-center">
-            <span>Время каста: {{ rowData.castingTime }}</span>
+            <span><b>Время каста:</b> {{ rowData.castingTime }}</span>
           </div>
+          <br>
           <div class="flex items-center">
-            <span>Мтаериалы: {{ rowData.materials }}</span>
+            <span><b>Материалы:</b> {{ rowData.materials }}</span>
           </div>
+          <br>
           <div class="flex items-center">
-            <span>Компоненты: {{ rowData.components }}</span>
+            <span><b>Компоненты:</b> {{ rowData.components }}</span>
           </div>
+          <br>
           <div class="flex items-center">
-            <span>Длиительность: {{ rowData.duration }}</span>
+            <span><b>Длительность:</b> {{ rowData.duration }}</span>
           </div>
+          <br>
           <div class="flex items-center">
-            <span>Источник: {{ rowData.source }}</span>
+            <span><b>Источник:</b> {{ rowData.source }}</span>
           </div>
         </div>
       </div>
@@ -72,8 +75,8 @@ export default defineComponent({
 </template>
 
 <style scoped>
-.long-text {
-  width: 300px;
-  max-width: 300px;
+.spells-container {
+  width: auto;
+  text-wrap: wrap;
 }
 </style>

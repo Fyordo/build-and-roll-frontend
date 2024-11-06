@@ -6,9 +6,9 @@ export default {
     sendGet: async function (path) {
         var headers = {}
         console.log(path)
-        if (localStorage.getItem("jwt") !== null){
+        if (localStorage.getItem("access_token") !== null){
             headers = {
-                Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             };
         }
         return await axios
@@ -24,11 +24,11 @@ export default {
             'Content-Type': 'application/json;charset=UTF-8',
             "Access-Control-Allow-Origin": "*",
         };
-        // if (localStorage.getItem("jwt") !== null){
-        //     headers = {
-        //         Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-        //     };
-        // }
+        if (localStorage.getItem("access_token") !== null){
+            headers = {
+                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            };
+        }
         console.log(data)
         return await axios
             .post(

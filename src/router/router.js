@@ -6,6 +6,7 @@ import Constructor from "@/pages/characters/Constructor.vue";
 import CharactersPage from "@/pages/characters/CharactersPage.vue";
 import Spells from "@/pages/spells/Spells.vue";
 import Weapons from "@/pages/weapons/Weapons.vue";
+import RoomList from "@/pages/room/RoomList.vue";
 import Room from "@/pages/room/Room.vue";
 
 
@@ -48,11 +49,18 @@ const routes = [
             ...route.query,
         }),
     },
+
+    {
+        path: '/room/:id',
+        name: 'Room',
+        component: Room,
+    },
     {
         path: '/room',
-        component: Room,
-        name: 'Room'
-    }
+        name: 'RoomList',
+        component: RoomList,
+    },
+
 ]
 
 const router = createRouter({

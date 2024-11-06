@@ -5,7 +5,6 @@ import SidebarItem from "@/components/navigation/SidebarItem.vue";
 
 const showSidebar = ref(true)
 
-console.log(localStorage.getItem('access_token'))
 let isAuth = localStorage.getItem('access_token') !== null;
 
 const breakpoints = useBreakpoint()

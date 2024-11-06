@@ -1,30 +1,30 @@
 
 <template>
   <div class="character-sheet">
-    <img src="@/assets/character-sheet.png" alt="Character Sheet" class="sheet-image" />
+    <img src="../../assets/character-sheet.png" alt="Character Sheet" class="sheet-image" />
     <div class="stats">
       <div class="stat">
-        <label for="strength">Сила:</label>
+        <label for="strength">пїЅпїЅпїЅпїЅ:</label>
         <input type="number" id="strength" v-model.number="stats.strength" />
       </div>
       <div class="stat">
-        <label for="dexterity">Ловкость:</label>
+        <label for="dexterity">пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ:</label>
         <input type="number" id="dexterity" v-model.number="stats.dexterity" />
       </div>
       <div class="stat">
-        <label for="constitution">Телосложение:</label>
+        <label for="constitution">пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ:</label>
         <input type="number" id="constitution" v-model.number="stats.constitution" />
       </div>
       <div class="stat">
-        <label for="intelligence">Интеллект:</label>
+        <label for="intelligence">пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ:</label>
         <input type="number" id="intelligence" v-model.number="stats.intelligence" />
       </div>
       <div class="stat">
-        <label for="wisdom">Мудрость:</label>
+        <label for="wisdom">пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ:</label>
         <input type="number" id="wisdom" v-model.number="stats.wisdom" />
       </div>
       <div class="stat">
-        <label for="charisma">Харизма:</label>
+        <label for="charisma">пїЅпїЅпїЅпїЅпїЅпїЅпїЅ:</label>
         <input type="number" id="charisma" v-model.number="stats.charisma" />
       </div>
     </div>
@@ -56,8 +56,8 @@ const stats = ref({
 
 .stats {
   position: absolute;
-  top: 20px; /* Позиционируйте в зависимости от изображения */
-  left: 20px; /* Позиционируйте в зависимости от изображения */
+  top: 20px; /* пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ */
+  left: 20px; /* пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ */
 }
 
 .stat {

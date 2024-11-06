@@ -1,8 +1,8 @@
 
 import { createRouter, createWebHistory } from "vue-router";
-import Auth from "@/components/auth/Auth.vue";
-import Profile from "@/components/profile/Profile.vue";
-import Constructor from "@/components/constructor/Constructor.vue";
+import Auth from "@/pages/auth/Auth.vue";
+import Profile from "@/pages/profile/Profile.vue";
+import Constructor from "@/pages/constructor/Constructor.vue";
 
 
 const routes = [

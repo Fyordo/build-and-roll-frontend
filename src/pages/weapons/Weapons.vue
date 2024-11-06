@@ -37,13 +37,17 @@ export default defineComponent({
     const perPage = 10;
     const currentPage = 1;
     const filter = "";
+    const selectedType = undefined;
+    const weaponTypes = ["Melee", "Range"];
 
     return {
       items,
       columns,
       perPage,
       currentPage,
-      filter
+      filter,
+      selectedType,
+      weaponTypes
     };
   },
 });
@@ -71,6 +75,15 @@ export default defineComponent({
         placeholder="Название..."
         label="Фильтр"
         style="margin-right: 10px"
+    />
+  </div>
+  <br>
+
+  <div class="grid sm:grid-cols-2 gap-6 mb-6">
+    <VaSelect
+        v-model="selectedType"
+        label="Уровень"
+        :options="weaponTypes"
     />
   </div>
   <VaDataTable

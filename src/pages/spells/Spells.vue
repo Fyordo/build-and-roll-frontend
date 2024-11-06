@@ -26,13 +26,21 @@ export default defineComponent({
     const perPage = 10;
     const currentPage = 1;
     const filter = "";
+    const selectedLevel = undefined;
+    const spellLevels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const selectedSchool = undefined;
+    const schoolOptions = [];
 
     return {
       items,
       columns,
       perPage,
       currentPage,
-      filter
+      filter,
+      selectedLevel,
+      spellLevels,
+      selectedSchool,
+      schoolOptions
     };
   },
 });
@@ -59,7 +67,21 @@ export default defineComponent({
         class="sm:col-span-2 md:col-span-3"
         placeholder="Название..."
         label="Фильтр"
+    />
+  </div>
+  <br>
+
+  <div class="grid sm:grid-cols-2 gap-6 mb-6">
+    <VaSelect
+        v-model="selectedLevel"
+        label="Уровень"
+        :options="spellLevels"
         style="margin-right: 10px"
+    />
+    <VaSelect
+        v-model="selectedSchool"
+        label="Школа"
+        :options="schoolOptions"
     />
   </div>
   <VaDataTable

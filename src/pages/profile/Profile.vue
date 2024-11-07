@@ -40,7 +40,7 @@ export default {
   <div class="profile-container">
     <VaCard>
       <VaImage
-          :src="'https://img.razrisyika.ru/kart/55/1200/219283-bogatyri-zemli-russkoy-26.jpg'"
+          :src="'https://img.freepik.com/free-icon/person-street-view-symbol_318-1051.jpg?size=626&ext=jpg'"
           class="h-52"
       />
       <VaCardTitle>

@@ -30,19 +30,6 @@
         />
       </template>
       <template #step-content-2>
-        <VaSelect
-            v-model="model.class"
-            label="Класс"
-            :rules="[
-            (v) => !!v || 'Required',
-          ]"
-            required-mark
-            :options="classOptions"
-            :text-by="(option) => option.name"
-            :track-by-by="(option) => option.id"
-        />
-      </template>
-      <template #step-content-3>
         <div v-for="(item, index) in stats" class="stats-selector">
           <div class="title-and-level">
             <h2>{{ item.title }}</h2>
@@ -57,12 +44,25 @@
           <VaDivider/>
         </div>
       </template>
+      <template #step-content-3>
+        <VaSelect
+            v-model="model.class"
+            label="Класс"
+            :rules="[
+            (v) => !!v || 'Required',
+          ]"
+            required-mark
+            :options="classOptions"
+            :text-by="(option) => option.name"
+            :track-by-by="(option) => option.id"
+        />
+      </template>
       <template #step-content-4>
         <div class="grid sm:grid-cols-2 md:grid-cols-5 gap-6 mb-6">
           <VaInput
               v-model="spellsFilter"
               class="sm:col-span-2 md:col-span-3"
-              placeholder="Filter..."
+              placeholder="Поиск заклинаний"
           />
           <br>
         </div>
@@ -100,33 +100,30 @@ import {defineComponent} from "vue";
 import {ref} from 'vue';
 import {useForm, defineVaStepperSteps} from 'vuestic-ui'
 import axiosAgregator from "@/server/axiosAgregator.js";
+import router from "@/router/router.js";
 
 export default defineComponent({
   mounted() {
-    this.loadData();
   },
   methods: {
-    saveList(){
-      // TODO Сохранение листа персонажа
+    saveList() {
+      const body = {
+        name: this.model.name,
+        raceId: this.model.race.id,
+        classId: this.model.class.id,
+        stats: this.stats.map(e => {
+          return {
+            id: e.id,
+            level: e.level
+          }
+        }),
+        spells: this.selectedSpells.map(e => e.id),
+      }
+
+      axiosAgregator.sendPost('/api/v1/character/create', body).then(_ => {
+        router.push('/characters')
+      })
     },
-    loadData() {
-      axiosAgregator.sendGet("/api/v1/lib/race/all").then(res => {
-        this.raceOptions = res.data.map(raceOption => {
-          return {
-            id: raceOption.id,
-            name: raceOption.name,
-          }
-        });
-      })
-      axiosAgregator.sendGet("/api/v1/lib/class/all").then(res => {
-        this.classOptions = res.data.map(classOptions => {
-          return {
-            id: classOptions.id,
-            name: classOptions.name,
-          }
-        });
-      })
-    }
   },
   data() {
     const currentStep = ref(0);
@@ -135,6 +132,7 @@ export default defineComponent({
       {
         id: 1,
         title: "Сила",
+        key: "Stength",
         level: 0,
       },
       {
@@ -144,22 +142,22 @@ export default defineComponent({
       },
       {
         id: 3,
-        title: "Телосложение",
-        level: 0,
-      },
-      {
-        id: 4,
         title: "Интеллект",
         level: 0,
       },
       {
-        id: 5,
+        id: 4,
         title: "Мудрость",
         level: 0,
       },
       {
-        id: 6,
+        id: 5,
         title: "Харизма",
+        level: 0,
+      },
+      {
+        id: 6,
+        title: "Телосложение",
         level: 0,
       }
     ];
@@ -176,11 +174,66 @@ export default defineComponent({
         label: 'Введите имя персонажа',
         beforeLeave: (step) => {
           step.hasError = !validate()
+          axiosAgregator.sendGet("/api/v1/lib/race/all").then(res => {
+            this.raceOptions = res.data.map(raceOption => {
+              return {
+                id: raceOption.id,
+                name: raceOption.name,
+                baseStats: raceOption.properties.base_ability_modifier
+              }
+            });
+          })
         },
       },
       {
         label: 'Выберите расу', beforeLeave: (step) => {
           step.hasError = !validate()
+          this.stats = [
+            {
+              id: 1,
+              title: "Сила",
+              level: this.model.race.baseStats?.Strength ?? 0,
+            },
+            {
+              id: 2,
+              title: "Ловкость",
+              level: this.model.race.baseStats?.Dexterity ?? 0,
+            },
+            {
+              id: 3,
+              title: "Телосложение",
+              level: this.model.race.baseStats?.Constitution ?? 0,
+            },
+            {
+              id: 4,
+              title: "Интеллект",
+              level: this.model.race.baseStats?.Intelligence ?? 0,
+            },
+            {
+              id: 5,
+              title: "Мудрость",
+              level: this.model.race.baseStats?.Wisdom ?? 0,
+            },
+            {
+              id: 6,
+              title: "Харизма",
+              level: this.model.race.baseStats?.Charisma ?? 0,
+            }
+          ];
+        }
+      },
+      {
+        label: 'Выберите характеристики', beforeLeave: (step) => {
+          step.hasError = !validate()
+          model.stats = stats;
+          axiosAgregator.sendGet("/api/v1/lib/class/all").then(res => {
+            this.classOptions = res.data.map(classOptions => {
+              return {
+                id: classOptions.id,
+                name: classOptions.name,
+              }
+            });
+          })
         }
       },
       {
@@ -192,12 +245,6 @@ export default defineComponent({
         }
       },
       {
-        label: 'Выберите характеристики', beforeLeave: (step) => {
-          step.hasError = !validate()
-          model.stats = stats;
-        }
-      },
-      {
         label: 'Выберите заклинания', beforeLeave: (step) => {
           step.hasError = !validate()
           this.saveList()
@@ -206,9 +253,9 @@ export default defineComponent({
     ]))
 
     const spellsColumns = [
-      { key: "name", label: "Название", sortable: true },
-      { key: "level", label: "Уровень", sortable: true },
-      { key: "school", label: "Школа", sortable: true },
+      {key: "name", label: "Название", sortable: true},
+      {key: "level", label: "Уровень", sortable: true},
+      {key: "school", label: "Школа", sortable: true},
     ];
     return {
       currentStep,

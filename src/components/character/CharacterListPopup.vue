@@ -40,7 +40,6 @@ export default {
   },
   mounted() {
     this.mappedStats = this.character.characterStats.map(e => {
-      console.log(e.id)
       return {
         name: this.stats.findLast(el => el.id === e.id)?.title,
         level: e.level,

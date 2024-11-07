@@ -106,7 +106,7 @@ export default defineComponent({
       this.modalOpened = true;
     },
     loadData(){
-      axiosAgregator.sendGet('/api/v1/character/all').then((response) => {
+      axiosAgregator.sendGet('/api/v1/character').then((response) => {
         this.items = response.data;
       })
     },

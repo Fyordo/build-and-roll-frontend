@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const apiPath = "http://localhost:8080";
+const apiPath = " https://d92a-91-142-83-71.ngrok-free.app";
 
 export default {
     sendGet: async function (path) {

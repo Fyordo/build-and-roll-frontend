@@ -74,7 +74,7 @@ onMounted(() => {
     <template #left>
       <VaSidebar
           :minimized="!showSidebar"
-          minimized-width="60px">
+          minimized-width="0px">
         <SidebarItem v-for="item in sidebarRoutes" :title="item.title" :link="item.link" :icon="item.icon"
                      :active="item.active"/>
         <VaSpacer/>

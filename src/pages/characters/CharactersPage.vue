@@ -53,6 +53,16 @@ export default defineComponent({
   components: {
     CharacterListPopup
   },
+  watch: {
+    selectedItems(){
+      if (this.selectedItems.length > 0) {
+        localStorage.setItem('characterListId', this.selectedItems[0].id);
+      }
+      else{
+        localStorage.removeItem('characterListId');
+      }
+    }
+  },
   data() {
     const items = [
       {

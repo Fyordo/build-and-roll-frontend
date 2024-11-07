@@ -136,10 +136,11 @@ export default {
     },
     async loadRoomData(id) {
       const response = await axiosAgregator.sendGet(`/api/v1/room/${id}`);
-
+      const characterListId = localStorage.getItem("characterListId");
       const authUser = {
         id: this.authUserId,
         username: this.authUsername,
+        characterListId: characterListId
       };
 
       await this.addUser(authUser);

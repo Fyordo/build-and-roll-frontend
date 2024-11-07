@@ -41,7 +41,7 @@ export default defineComponent({
     const columns = [
       { key: "name", label: "Название", sortable: false },
       { key: "type", label: "Тип оружия", sortable: false },
-      { key: "actions", label: "Допольнительная информация", sortable: false, width: 80 },
+      { key: "actions", label: "Дополнительная информация", sortable: false, width: 80 },
     ];
 
     const perPage = 10;

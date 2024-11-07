@@ -29,7 +29,7 @@ export default defineComponent({
       {key: "name", label: "Название", sortable: false},
       {key: "school", label: "Школа", sortable: false},
       {key: "properties.range", label: "Дальность", sortable: false},
-      {key: "actions", label: "Допольнительная информация", width: 80},
+      {key: "actions", label: "Дополнительная информация", width: 80},
     ];
 
     const perPage = 10;

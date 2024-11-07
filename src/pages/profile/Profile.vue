@@ -21,7 +21,7 @@ onMounted(() => {
 
 const logout = () => {
 
-  localStorage.removeItem('access_token')
+  localStorage.clear()
   router.push('/login').then(() => {
     location.reload();
   });

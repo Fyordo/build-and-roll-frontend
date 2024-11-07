@@ -1,7 +1,7 @@
 version: "3.6"
 
 services:
-  app:
+  lk:
     container_name: ${APP_NAME}-app
     build:
       context: .
@@ -10,3 +10,13 @@ services:
       - ".env"
     ports:
       - "8079:5173"
+    networks:
+      default:
+        aliases:
+          - build-and-roll-network
+
+
+networks:
+  default:
+    name: build-and-roll-network
+    external: true

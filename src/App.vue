@@ -10,10 +10,10 @@ let isAuth = localStorage.getItem('access_token') !== null;
 const breakpoints = useBreakpoint()
 
 const sidebarRoutes = [
-  {title: "Листы персонажей", link: "/characters", icon: "dataset", active: true},
+  {title: "Листы персонажей", link: "/characters", icon: "dataset", active: isAuth},
   {title: "Заклинания", link: "/spells", icon: "star", active: true},
   {title: "Оружие", link: "/weapons", icon: "colorize", active: true},
-  {title: "Комната", link: "/room", icon: "house", active: true},
+  {title: "Комната", link: "/room", icon: "house", active: isAuth},
 ];
 
 import {computed} from 'vue';
@@ -74,7 +74,7 @@ onMounted(() => {
     <template #left>
       <VaSidebar
           :minimized="!showSidebar"
-          minimized-width="60px">
+          minimized-width="0px">
         <SidebarItem v-for="item in sidebarRoutes" :title="item.title" :link="item.link" :icon="item.icon"
                      :active="item.active"/>
         <VaSpacer/>

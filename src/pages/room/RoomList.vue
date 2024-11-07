@@ -1,11 +1,21 @@
 <template>
   <div class="rooms-container">
-    <VaCard v-for="room in rooms" :key="room.id" class="room-card">
-      <div class="room-title">{{ room.title }}</div>
-      <div class="room-owner">Владелец: {{ room.owner.username }}</div>
-      <VaCardActions>
-        <VaButton @click="joinRoom(room.id)">Присоединиться</VaButton>
-      </VaCardActions>
+    <VaCard
+        stripe
+        stripe-color="success"
+        v-for="room in rooms" :key="room.id"
+    >
+      <VaCardTitle>
+        <h3 class="va-h3">
+          {{ room.title }}
+        </h3>
+      </VaCardTitle>
+      <VaCardContent>
+        Владелец: {{ room.owner.username }}
+        <VaCardActions>
+          <VaButton @click="joinRoom(room.id)">Присоединиться</VaButton>
+        </VaCardActions>
+      </VaCardContent>
     </VaCard>
     <VaButton @click="toggleModal">
       Создать комнату

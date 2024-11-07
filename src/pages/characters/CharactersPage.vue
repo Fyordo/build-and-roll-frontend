@@ -16,31 +16,42 @@
       selectable
       :select-mode="'single'"
       @selection-change="selectedItemsEmitted = $event.currentSelectedItems"
-  />
+  >
+    <template #cell(actions)="{ rowIndex }">
+      <VaButton
+          preset="plain"
+          icon="visibility"
+          @click="this.openModal(rowIndex)"
+      />
+      <VaButton
+          preset="plain"
+          icon="delete"
+          class="ml-3"
+          @click="deleteItemById(rowIndex)"
+      />
+    </template>
+  </VaDataTable>
   <br>
 
-  <VaAlert
-      class="!mt-6"
-      color="info"
-      outline
+
+  <VaModal
+      v-model="this.modalOpened"
   >
-    Выбранный основной лист персонажа:
-    <VaChip
-        v-for="item in selectedItemsEmitted"
-        :key="item.id"
-        class="ml-2"
-        @click="unselectItem(item)"
-    >
-      {{ item.name }}
-    </VaChip>
-  </VaAlert>
+    <CharacterListPopup
+        :character-id="this.openedItemId"
+    />
+  </VaModal>
 </template>
 
 <script>
 import {defineComponent} from "vue";
 import router from "@/router/router.js";
+import CharacterListPopup from "@/components/character/CharacterListPopup.vue";
 
 export default defineComponent({
+  components: {
+    CharacterListPopup
+  },
   data() {
     const items = [
       {
@@ -64,9 +75,12 @@ export default defineComponent({
       {key: "race", label: "Раса персонажа", sortable: false},
       {key: "class", label: "Класс персонажа", sortable: false},
       {key: "level", label: "Уровень персонажа", sortable: false},
+      {key: "actions", label: "Действия", width: '80px'},
     ];
 
     return {
+      openedItemId: null,
+      modalOpened: false,
       items,
       columns,
       selectedItems: [items[1]],
@@ -75,7 +89,11 @@ export default defineComponent({
   },
 
   methods: {
-    toConstructor(){
+    openModal(id) {
+      this.openedItemId = id;
+      this.modalOpened = true;
+    },
+    toConstructor() {
       router.push('/constructor')
     },
     unselectItem(item) {

@@ -23,9 +23,9 @@
 
     <VaModal v-model="showModal" @ok="submitForm">
       <h3 class="va-h3">Создать комнату</h3>
+      <br>
       <form @submit.prevent="submitForm">
         <div>
-          <label for="roomTitle">Название комнаты:</label>
             <VaInput
                 v-model=newRoom.title
                 placeholder="Название"

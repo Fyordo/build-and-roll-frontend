@@ -132,7 +132,6 @@ export default defineComponent({
       {
         id: 1,
         title: "Сила",
-        key: "Stength",
         level: 0,
       },
       {

@@ -10,10 +10,10 @@ let isAuth = localStorage.getItem('access_token') !== null;
 const breakpoints = useBreakpoint()
 
 const sidebarRoutes = [
-  {title: "Листы персонажей", link: "/characters", icon: "dataset", active: true},
-  {title: "Заклинания", link: "/spells", icon: "star", active: true},
-  {title: "Оружие", link: "/weapons", icon: "colorize", active: true},
-  {title: "Комната", link: "/room", icon: "house", active: true},
+  {title: "Листы персонажей", link: "/characters", icon: "dataset", active: isAuth},
+  {title: "Заклинания", link: "/spells", icon: "star", active: isAuth},
+  {title: "Оружие", link: "/weapons", icon: "colorize", active: isAuth},
+  {title: "Комната", link: "/room", icon: "house", active: isAuth},
 ];
 
 import {computed} from 'vue';

@@ -31,7 +31,6 @@ export default defineComponent({
       }
       axiosAgregator.sendGet(path)
           .then(response => {
-            console.log(response.data);
             this.items = response.data;
           })
     }
@@ -98,9 +97,8 @@ export default defineComponent({
     />
   </div>
   <VaDataTable
-      :items="items"
-      :columns="columns"
-      @filtered="filtered = $event.items"
+      :items="this.items"
+      :columns="this.columns"
   >
     <template #cell(actions)="{ row, isExpanded }">
       <VaButton

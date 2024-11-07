@@ -1,25 +1,34 @@
 <script>
 import {defineComponent} from "vue";
-import {allSpells} from "@/assets/allSpells.js";
+import axiosAgregator from "@/server/axiosAgregator.js";
 
 export default defineComponent({
-  computed: {
-    pages() {
-      return this.perPage && this.perPage !== 0
-          ? Math.ceil(this.items.length / this.perPage)
-          : this.items.length;
+  mounted() {
+    this.loadData();
+  },
+  watch: {
+    currentPage() {
+      this.loadData();
     },
+    perPage() {
+      this.loadData();
+    },
+    selectedLevel() {
+      this.loadData();
+    },
+    selectedSchool() {
+      this.loadData();
+    },
+    filter() {
+      this.loadData();
+    }
   },
   data() {
-    const items = allSpells.map((e) => {
-      return e.ru;
-    });
-
     const columns = [
       {key: "level", label: "Уровень", sortable: false},
       {key: "name", label: "Название", sortable: false},
       {key: "school", label: "Школа", sortable: false},
-      {key: "range", label: "Дальность", sortable: false},
+      {key: "properties.range", label: "Дальность", sortable: false},
       {key: "actions", label: "Допольнительная информация", width: 80},
     ];
 
@@ -29,10 +38,22 @@ export default defineComponent({
     const selectedLevel = undefined;
     const spellLevels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
     const selectedSchool = undefined;
-    const schoolOptions = [];
+    const schoolOptions = [
+      'Divination',
+      'Illusion',
+      'Necromancy',
+      'Abjuration',
+      'Transmutation',
+      'Evocation',
+      'Transmutation',
+      'Conjuration',
+      'Enchantment',
+      'Conjuration',
+      'Evocation'
+    ];
 
     return {
-      items,
+      items: [],
       columns,
       perPage,
       currentPage,
@@ -43,7 +64,27 @@ export default defineComponent({
       schoolOptions
     };
   },
-});
+  methods: {
+    loadData() {
+      let path = `/api/v1/lib/spell?page=${this.currentPage}&perPage=${this.perPage}`;
+      if (this.selectedSchool !== undefined) {
+        path += `&school=${this.selectedSchool}`;
+      }
+      if (this.selectedLevel !== undefined) {
+        path += `&level=${this.selectedLevel}`;
+      }
+      if (this.filter.length > 0) {
+        path += `&search=${this.filter}`;
+      }
+      axiosAgregator.sendGet(path)
+          .then(response => {
+            console.log(response.data);
+            this.items = response.data;
+          })
+    }
+  }
+})
+;
 </script>
 
 <template>
@@ -87,10 +128,6 @@ export default defineComponent({
   <VaDataTable
       :items="items"
       :columns="columns"
-      :per-page="perPage"
-      :current-page="currentPage"
-      :filter="filter"
-      @filtered="filtered = $event.items"
   >
     <template #cell(actions)="{ row, isExpanded }">
       <VaButton
@@ -108,43 +145,31 @@ export default defineComponent({
         <div class="pl-2 spells-container">
           <div class="flex items-center">
               <span>
-                  <b>Описание:</b> {{ rowData.text }}
+                  <b>Описание:</b> {{ rowData.properties.text }}
               </span>
           </div>
           <br>
           <div class="flex items-center">
-            <span><b>Время каста:</b> {{ rowData.castingTime }}</span>
+            <span><b>Время каста:</b> {{ rowData.properties.castingTime }}</span>
           </div>
           <br>
           <div class="flex items-center">
-            <span><b>Материалы:</b> {{ rowData.materials }}</span>
+            <span><b>Материалы:</b> {{ rowData.properties.materials }}</span>
           </div>
           <br>
           <div class="flex items-center">
-            <span><b>Компоненты:</b> {{ rowData.components }}</span>
+            <span><b>Компоненты:</b> {{ rowData.properties.components }}</span>
           </div>
           <br>
           <div class="flex items-center">
-            <span><b>Длительность:</b> {{ rowData.duration }}</span>
+            <span><b>Длительность:</b> {{ rowData.properties.duration }}</span>
           </div>
           <br>
           <div class="flex items-center">
-            <span><b>Источник:</b> {{ rowData.source }}</span>
+            <span><b>Источник:</b> {{ rowData.properties.source }}</span>
           </div>
         </div>
       </div>
-    </template>
-    <template #bodyAppend>
-      <tr>
-        <td colspan="6">
-          <div class="flex justify-center mt-4">
-            <VaPagination
-                v-model="currentPage"
-                :pages="pages"
-            />
-          </div>
-        </td>
-      </tr>
     </template>
   </VaDataTable>
 </template>

@@ -24,7 +24,8 @@ export default defineComponent({
     addToList(row) {
       const item = this.items[row]
       const selectedListId = localStorage.getItem("characterListId")
-      if (selectedListId === undefined) {
+      if (selectedListId === null) {
+        alert('У вас не выбран лист персонажа!')
         return;
       }
       axiosAgregator.sendPost("/api/v1/character/addweapon", {

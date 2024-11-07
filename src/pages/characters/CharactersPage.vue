@@ -77,8 +77,8 @@ export default defineComponent({
 
     const columns = [
       {key: "name", label: "Имя персонажа", sortable: false},
-      {key: "race.name", label: "Раса персонажа", sortable: false},
-      {key: "characterClass.name", label: "Класс персонажа", sortable: false},
+      {key: "race", label: "Раса персонажа", sortable: false},
+      {key: "class", label: "Класс персонажа", sortable: false},
       {key: "level", label: "Уровень персонажа", sortable: false},
       {key: "actions", label: "Действия", width: '80px'},
     ];
@@ -97,8 +97,11 @@ export default defineComponent({
     this.loadData()
   },
   methods: {
-    openModal(id) {
-      axiosAgregator.sendGet('/')
+    async openModal(id) {
+      const item = this.items[id];
+      await axiosAgregator.sendGet('/api/v1/character/' + item.id).then(response => {
+        this.openedItem = response.data;
+      })
       this.openedItemId = id;
       this.modalOpened = true;
     },

@@ -59,7 +59,7 @@
             <VaButton
                 preset="plain"
                 icon="visibility"
-                @click="this.openModal(user.id)"
+                @click="this.openModal(user)"
             />
           </td>
         </tr>
@@ -71,7 +71,7 @@
         v-model="this.modalOpened"
     >
       <CharacterListPopup
-          :character-id="this.openedItemId"
+          :character="this.openedItem"
       />
     </VaModal>
 
@@ -102,6 +102,7 @@ export default {
 
     return {
       openedItemId: null,
+      openedItem: null,
       modalOpened: false,
       columns: columns,
       room: null,
@@ -126,8 +127,11 @@ export default {
   },
 
   methods: {
-    openModal(id) {
-      this.openedItemId = id;
+    async openModal(user) {
+      this.openedItemId = user.id;
+      await axiosAgregator.sendGet('/api/v1/character/'+user.characterListId).then(response => {
+        this.openedItem = response.data;
+      })
       this.modalOpened = true;
     },
     async loadRoomData(id) {

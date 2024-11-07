@@ -122,7 +122,7 @@ export default defineComponent({
         {{ isExpanded ? 'Закрыть' : 'Открыть' }}
       </VaButton>
     </template>
-    <template #cell(actions)="{ row, isExpanded }">
+    <template #cell(actions)="{ rowIndex }">
       <VaButton
           preset="plain"
           icon="add"

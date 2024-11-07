@@ -33,8 +33,21 @@ export default {
         level: 0,
       }
     ];
+    const spellsColumns = [
+      {key:"name", label:"Название"},
+      {key:"school", label:"Школа"},
+      {key:"level", label:"Уровень"}
+    ]
+    const weaponsColumns = [
+      {key:"name", label:"Название"},
+      {key:"type", label:"Тип оружия"},
+      {key:"properties.Damage", label:"Урон"},
+      {key:"properties.Damagetype", label:"Тип урона"},
+    ]
     return {
       stats,
+      spellsColumns,
+      weaponsColumns,
       mappedStats: []
     };
   },
@@ -66,10 +79,10 @@ export default {
   <VaDataTable :items="this.mappedStats"/>
   <br>
   <h6 class="va-h6">Заклинания</h6>
-  <VaDataTable :items="character.spells"/>
+  <VaDataTable :items="character.spells" :columns="spellsColumns"/>
   <br>
   <h6 class="va-h6">Оружие</h6>
-  <VaDataTable :items="character.weapons"/>
+  <VaDataTable :items="character.weapons" :columns="weaponsColumns"/>
 </template>
 
 <style scoped>

@@ -88,6 +88,9 @@ export default {
     this.enablePusher(this.roomId);
     this.loadRoomData(this.roomId);
   },
+  beforeUnmount() {
+    this.deleteUser();
+  },
 
   methods: {
     async loadRoomData(id) {
@@ -162,16 +165,19 @@ export default {
     },
 
     async leaveRoom() {
-      const userId = localStorage.getItem("userId");
+      await this.deleteUser();
+      this.$router.push('/room');
+    },
 
+    async deleteUser() {
+      const userId = localStorage.getItem("userId");
       await axiosAgregator.sendPost("/api/v1/room/remove_user", {
         userId: userId,
         roomId: this.roomId,
       });
-
-      this.$router.push('/room');
     }
   }
+
 };
 
 </script>

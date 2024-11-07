@@ -7,7 +7,6 @@
       </VaCardHeader>
       <VaCardContent>
         <p>Описание: {{ room.description }}</p>
-
       </VaCardContent>
       <VaCardActions>
         <VaButton @click="leaveRoom">Покинуть комнату</VaButton>
@@ -28,6 +27,7 @@
     <div v-if="errorMessage" class="error-message">
       <p>{{ errorMessage }}</p>
     </div>
+
     <transition-group name="fade" tag="div">
       <div v-for="(notification, index) in notifications" :key="index" class="notification">
         {{ notification }}
@@ -37,118 +37,117 @@
   </div>
 </template>
 
-
-<script setup>
-import { ref, onMounted } from 'vue';
+<script>
+import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axiosAgregator from "@/server/axiosAgregator.js";
 import Pusher from "pusher-js";
 
-const route = useRoute();
-const router = useRouter();
+export default {
+  data() {
+    return {
+      room: null,
+      notifications: [],
+      users: [],
+      roomId: null,
+      authUserId: localStorage.getItem("userId"),
+      authUsername: localStorage.getItem("username"),
+      pusher: new Pusher('61cebc6ceca8652470ef', {
+        cluster: 'eu',
+      }),
+      channel: null,
+    };
+  },
 
-const room = ref(null);
-const notifications = ref([]);
-let users = ref([]);
-let roomId = ref(null);
-const authUserId = localStorage.getItem("userId");
-const pusher = new Pusher('61cebc6ceca8652470ef', {
-  cluster: 'eu',
-});
-let channel = ref(null);
-let messages = ref([]);
+  mounted() {
+    this.roomId = this.$route.params.id;
+    this.enablePusher(this.roomId);
+    this.loadRoomData(this.roomId);
+  },
 
+  methods: {
+    async loadRoomData(id) {
+      const response = await axiosAgregator.sendGet(`/api/v1/room/${id}`);
 
-const loadRoomData = async (id) => {
-  const response = await axiosAgregator.sendGet(`/api/v1/room/${id}`);
+      const authUser = {
+        id: this.authUserId,
+        username: this.authUsername,
+      };
 
-  const authUser = {
-    id: authUserId,
-    username: localStorage.getItem("username"),
-  };
+      this.addUser(authUser);
+      this.room = response.data;
+    },
 
-  addUser(authUser);
-  room.value = response.data;
-};
+    enablePusher(id) {
+      this.channel = this.pusher.subscribe(`room_${id}_channel`);
 
-const enablePusher = async(id) => {
-  channel = pusher.subscribe(`room_${id}_channel`);
-  channel.bind('USER_JOINED', function(data) {
-    const user = data.user;
-    addUser(user);
-  });
+      this.channel.bind('USER_JOINED', (data) => {
+        const user = data.user;
+        this.addUser(user);
+      });
 
-  channel.bind('USER_LEFT', function(data) {
-    const user = data.user;
-    removeUser(user);
-  });
+      this.channel.bind('USER_LEFT', (data) => {
+        const user = data.user;
+        this.removeUser(user);
+      });
 
-  await channel.bind('UPDATE_USERS', function(data) {
-    const user = data.user;
-    console.log("+++++")
-    console.log(data.users)
+      this.channel.bind('UPDATE_USERS', (data) => {
+        const user = data.user;
 
-    if(user.id.toString() === authUserId){
-      data.users.forEach(newUser => {
-        if (!users.value.some(existingUser => existingUser.username === newUser.username)) {
-          users.value.push(newUser);
+        if (user.username === this.authUsername) {
+          data.users.forEach(newUser => {
+            if (!this.users.some(existingUser => existingUser.username === newUser.username)) {
+              this.users.push(newUser);
+            }
+          });
         }
       });
-    }
-  });
-};
+    },
 
-const addUser = async (user) => {
-  if (!users.value.some(existingUser => existingUser.id === user.id)) {
-    if (user.id !== authUserId) {
-      addNotification(`${user.username} подключился к комнате`);
-      console.log("------");
-      await axiosAgregator.sendPost(`/api/v1/room/${roomId}/send_users`, {
-        users : users.value,
-        user: user
+    async addUser(user) {
+      if (!this.users.some(existingUser => existingUser.username === user.username)) {
+        if (user.username !== this.authUsername) {
+          this.addNotification(`${user.username} подключился к комнате`);
+          await axiosAgregator.sendPost(`/api/v1/room/${this.roomId}/send_users`, {
+            users: this.users,
+            user: user
+          });
+        }
+        this.users.push(user);
+      }
+    },
+
+    removeUser(user) {
+      const userIndex = this.users.findIndex(existingUser => existingUser.id === user.id);
+
+      if (userIndex !== -1) {
+        this.addNotification(`${user.username} вышел из комнаты`);
+        this.users.splice(userIndex, 1);
+      }
+    },
+
+    addNotification(message) {
+      if (this.notifications.length < 3) {
+        this.notifications.push(message);
+
+        setTimeout(() => {
+          this.notifications.shift();
+        }, 10000);
+      }
+    },
+
+    async leaveRoom() {
+      const userId = localStorage.getItem("userId");
+
+      await axiosAgregator.sendPost("/api/v1/room/remove_user", {
+        userId: userId,
+        roomId: this.roomId,
       });
+
+      this.$router.push('/room');
     }
-    users.value.push(user);
   }
 };
-
-const removeUser = (user) => {
-  const userIndex = users.value.findIndex(existingUser => existingUser.id === user.id);
-  if (userIndex !== -1) {
-    addNotification(`${user.username} вышел из комнаты`);
-    users.value.splice(userIndex, 1);
-  }
-};
-
-const addNotification = (message) => {
-  if (notifications.value.length < 3) {
-    notifications.value.push(message);
-    setTimeout(() => {
-      notifications.value.shift();
-    }, 10000);
-  }
-};
-
-const addMessage = (message) => {
-  this.messages.push(message);
-};
-
-onMounted(() => {
-  roomId = route.params.id;
-  enablePusher(roomId);
-  loadRoomData(roomId);
-});
-
-const leaveRoom = async () => {
-  const userId = localStorage.getItem("userId");
-  await axiosAgregator.sendPost("/api/v1/room/remove_user", {
-    userId: userId,
-    roomId: roomId,
-  });
-  router.push('/room');
-};
-
-
 </script>
 
 <style scoped>
@@ -162,6 +161,7 @@ const leaveRoom = async () => {
   width: 100%;
   max-width: 600px;
 }
+
 .notification {
   background-color: #255fc6; /* Цвет фона уведомления */
   border: 1px solid #007bff; /* Граница */
@@ -176,5 +176,4 @@ const leaveRoom = async () => {
 .fade-enter, .fade-leave-to /* .fade-leave-active в версии Vue >=2.1.8 */ {
   opacity: 0; /* Начальная непрозрачность */
 }
-
 </style>

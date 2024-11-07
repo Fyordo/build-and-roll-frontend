@@ -27,7 +27,7 @@ export default defineComponent({
       if (selectedListId === undefined) {
         return;
       }
-      axiosAgregator.sendPost("/api/v1/...", {
+      axiosAgregator.sendPost("/api/v1/character/addweapon", {
         weaponId: item.id,
         characterListId: selectedListId
       })

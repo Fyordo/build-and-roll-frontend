@@ -72,9 +72,10 @@ export default defineComponent({
       if (selectedListId === undefined){
         return;
       }
-      axiosAgregator.sendPost("/api/v1/...", {
+      axiosAgregator.sendPost("/api/v1/character/addspell", {
         spellId: item.id,
         characterListId: selectedListId
+      }).then(res => {
       })
     },
     loadData() {

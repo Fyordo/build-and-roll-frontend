@@ -98,9 +98,8 @@ export default defineComponent({
   },
   methods: {
     openModal(id) {
-      console.log(this.items[id])
+      axiosAgregator.sendGet('/')
       this.openedItemId = id;
-      this.openedItem = this.items[id];
       this.modalOpened = true;
     },
     loadData(){

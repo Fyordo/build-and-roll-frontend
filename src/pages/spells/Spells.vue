@@ -25,11 +25,12 @@ export default defineComponent({
   },
   data() {
     const columns = [
-      {key: "level", label: "Уровень", sortable: false},
-      {key: "name", label: "Название", sortable: false},
-      {key: "school", label: "Школа", sortable: false},
-      {key: "properties.range", label: "Дальность", sortable: false},
-      {key: "actions", label: "Дополнительная информация", width: 80},
+      {key: "level", label: "Уровень", sortable: false, width: '80px'},
+      {key: "name", label: "Название", sortable: false, width: '80px'},
+      {key: "school", label: "Школа", sortable: false, width: '80px'},
+      {key: "properties.range", label: "Дальность", sortable: false, width: '80px'},
+      {key: "info", label: "Дополнительная информация", width: 80},
+      {key: "actions", label: "Добавить в выбранный лист", width: '80px'},
     ];
 
     const perPage = 10;
@@ -65,6 +66,17 @@ export default defineComponent({
     };
   },
   methods: {
+    addToList(row){
+      const item = this.items[row]
+      const selectedListId = localStorage.getItem("characterListId")
+      if (selectedListId === undefined){
+        return;
+      }
+      axiosAgregator.sendPost("/api/v1/...", {
+        spellId: item.id,
+        characterListId: selectedListId
+      })
+    },
     loadData() {
       let path = `/api/v1/lib/spell?page=${this.currentPage}&perPage=${this.perPage}`;
       if (this.selectedSchool !== undefined) {
@@ -129,7 +141,7 @@ export default defineComponent({
       :items="items"
       :columns="columns"
   >
-    <template #cell(actions)="{ row, isExpanded }">
+    <template #cell(info)="{ row, isExpanded }">
       <VaButton
           :icon="isExpanded ? 'va-arrow-up': 'va-arrow-down'"
           preset="secondary"
@@ -138,6 +150,13 @@ export default defineComponent({
       >
         {{ isExpanded ? 'Закрыть' : 'Открыть' }}
       </VaButton>
+    </template>
+    <template #cell(actions)="{ rowIndex }">
+      <VaButton
+          preset="plain"
+          icon="add"
+          @click="this.addToList(rowIndex)"
+      />
     </template>
 
     <template #expandableRow="{ rowData }">

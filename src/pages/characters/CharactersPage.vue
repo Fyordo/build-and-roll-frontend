@@ -23,12 +23,6 @@
           icon="visibility"
           @click="this.openModal(rowIndex)"
       />
-      <VaButton
-          preset="plain"
-          icon="delete"
-          class="ml-3"
-          @click="deleteItemById(rowIndex)"
-      />
     </template>
   </VaDataTable>
   <br>

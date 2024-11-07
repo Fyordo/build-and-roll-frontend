@@ -48,32 +48,16 @@ export default defineComponent({
     CharacterListPopup
   },
   watch: {
-    selectedItems(){
+    selectedItems() {
       if (this.selectedItems.length > 0) {
         localStorage.setItem('characterListId', this.selectedItems[0].id);
-      }
-      else{
+      } else {
         localStorage.removeItem('characterListId');
       }
     }
   },
   data() {
-    const items = [
-      {
-        id: 1,
-        name: "Персонаж 1",
-        race: "Орк",
-        class: "Клирик",
-        level: "1",
-      },
-      {
-        id: 2,
-        name: "Персонаж 2",
-        race: "Эльф",
-        class: "Мечник",
-        level: "5",
-      },
-    ];
+    const items = [];
 
     const columns = [
       {key: "name", label: "Имя персонажа", sortable: false},
@@ -89,7 +73,7 @@ export default defineComponent({
       modalOpened: false,
       items,
       columns,
-      selectedItems: [items[1]],
+      selectedItems: [],
       selectedItemsEmitted: [],
     };
   },
@@ -105,9 +89,19 @@ export default defineComponent({
       this.openedItemId = id;
       this.modalOpened = true;
     },
-    loadData(){
-      axiosAgregator.sendGet('/api/v1/character').then((response) => {
+    async loadData() {
+      await axiosAgregator.sendGet('/api/v1/character').then((response) => {
         this.items = response.data;
+        const selectedListId = localStorage.getItem('characterListId');
+        if (selectedListId) {
+          console.log(selectedListId)
+          for (const item of this.items) {
+            if (item.id == selectedListId) {
+              this.selectedItems.push(item)
+              return;
+            }
+          }
+        }
       })
     },
     toConstructor() {

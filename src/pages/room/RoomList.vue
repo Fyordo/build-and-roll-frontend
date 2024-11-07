@@ -62,6 +62,10 @@ export default {
     async joinRoom(roomId) {
       const userId = localStorage.getItem('userId');
       const characterListId = localStorage.getItem("characterListId");
+      if (characterListId === null) {
+        alert('У вас не выбран лист персонажа!')
+        return
+      }
       await axiosAgregator.sendPost("/api/v1/room/add_user", {
         userId: userId,
         roomId: roomId,

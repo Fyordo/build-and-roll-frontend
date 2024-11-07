@@ -1,17 +1,22 @@
 <template>
   <div class="main-container">
     <div class="room-container">
-      <VaCard class="room-details-card" v-if="room">
-        <VaCardBlock>
-          <h3>{{ room.title }}</h3>
-          <p>Владелец: {{ room.owner.username }}</p>
-        </VaCardBlock>
+      <VaCard
+          stripe
+          stripe-color="success"
+          v-if="room"
+      >
+        <VaCardTitle>
+          <h3 class="va-h3">
+            {{ room.title }}
+          </h3>
+        </VaCardTitle>
         <VaCardContent>
-          <p>Описание: {{ room.description }}</p>
+          Владелец: {{ room.owner.username }}
+          <VaCardActions>
+            <VaButton @click="leaveRoom">Покинуть комнату</VaButton>
+          </VaCardActions>
         </VaCardContent>
-        <VaCardActions>
-          <VaButton @click="leaveRoom">Покинуть комнату</VaButton>
-        </VaCardActions>
       </VaCard>
 
       <div v-else>
@@ -25,34 +30,50 @@
       </transition-group>
     </div> <!-- End of room-container -->
 
-    <VaList fit>
-      <VaListLabel> Пользователи в комнате: </VaListLabel>
-      <VaListItem
-          v-for="(user, id) in this.users"
-          :key="id"
-          class="list__item"
-      >
-        <VaListItemSection avatar>
-          <VaAvatar>
-            <img :src="user.img" :alt="user.name">
-          </VaAvatar>
-        </VaListItemSection>
+    <br>
+    <br>
 
-        <VaListItemSection>
-          <VaListItemLabel>
-            {{ user.username }}
-          </VaListItemLabel>
+    <div class="va-table-responsive">
+      <table class="va-table">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Имя игрока</th>
+          <th>Здоровье</th>
+          <th>Уровень</th>
+          <th>Тип игрока</th>
+          <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr
+            v-for="user in users"
+            :key="user.id"
+        >
+          <td>{{ user.id }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ 10 }}</td>
+          <td>{{ 1 }}</td>
+          <td>{{ user.id == room.owner.id ? "Dungeon Master" : "Игрок" }}</td>
+          <td>
+            <VaButton
+                preset="plain"
+                icon="visibility"
+                @click="this.openModal(user.id)"
+            />
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
 
-        </VaListItemSection>
-
-        <VaListItemSection icon>
-          <VaIcon
-              name="remove_red_eye"
-              color="background-element"
-          />
-        </VaListItemSection>
-      </VaListItem>
-    </VaList>
+    <VaModal
+        v-model="this.modalOpened"
+    >
+      <CharacterListPopup
+          :character-id="this.openedItemId"
+      />
+    </VaModal>
 
   </div>
 </template>
@@ -62,15 +83,27 @@
 import {VaListItemSection} from "vuestic-ui";
 import axiosAgregator from "@/server/axiosAgregator.js";
 import Pusher from "pusher-js";
+import CharacterListPopup from "@/components/character/CharacterListPopup.vue";
+
 const pusher = new Pusher('61cebc6ceca8652470ef', {
   cluster: 'eu',
 })
 let channel = null;
 
 export default {
-  components: {VaListItemSection},
+  components: {CharacterListPopup, VaListItemSection},
   data() {
+    const columns = [
+      {key: "id", label: "ID игрока"},
+      {key: "username", label: "Имя игрока", sortable: false},
+      {key: "type", label: "Тип игрока", sortable: false},
+      {key: "actions", label: "Действия", width: '80px'},
+    ];
+
     return {
+      openedItemId: null,
+      modalOpened: false,
+      columns: columns,
       room: null,
       notifications: [],
       users: [],
@@ -93,6 +126,10 @@ export default {
   },
 
   methods: {
+    openModal(id) {
+      this.openedItemId = id;
+      this.modalOpened = true;
+    },
     async loadRoomData(id) {
       const response = await axiosAgregator.sendGet(`/api/v1/room/${id}`);
 
@@ -103,6 +140,7 @@ export default {
 
       await this.addUser(authUser);
       this.room = response.data;
+      
     },
 
     enablePusher(id) {
@@ -126,16 +164,13 @@ export default {
 
       channel.bind('UPDATE_USERS', (data) => {
         const user = data.user;
-        console.log("000")
-        if(user.username !== this.authUsername) {
+        
+        if (user.username !== this.authUsername) {
           return;
         }
-        console.log("+++");
+        
         this.users = data.users;
-        console.log(this.users);
-        //this.users.push(user);
-
-        //console.log(this.users);
+        
       });
     },
 
@@ -188,9 +223,9 @@ export default {
 }
 
 .room-container {
- display: flex;
- justify-content: start;
- margin-top: 20px;
+  display: flex;
+  justify-content: start;
+  margin-top: 20px;
 }
 
 .room-details-card {
@@ -200,17 +235,18 @@ export default {
 
 
 .notification {
- background-color: #255fc6; /* Цвет фона уведомления */
- border: 1px solid #007bff; /* Граница */
- padding: 10px; /* Отступы */
- margin: 10px; /* Отступы между уведомлениями */
+  background-color: #255fc6; /* Цвет фона уведомления */
+  border-radius: 5px;
+  padding: 10px; /* Отступы */
+  margin: 10px; /* Отступы между уведомлениями */
 }
 
 .fade-enter-active, .fade-leave-active {
   transition: opacity 0.5s ease; /* Плавный переход */
 }
 
-.fade-enter, .fade-leave-to /* .fade-leave-active в версии Vue >=2.1.8 */ {
+.fade-enter, .fade-leave-to /* .fade-leave-active в версии Vue >=2.1.8 */
+{
   opacity: 0; /* Начальная непрозрачность */
 }
 

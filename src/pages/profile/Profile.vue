@@ -1,64 +1,59 @@
-<script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { VaInput, VaButton } from 'vuestic-ui';
+<script>
+import {ref, onMounted} from 'vue';
+import {useRouter} from 'vue-router';
+import {VaInput, VaButton} from 'vuestic-ui';
 import defaultLogo from '@/assets/default_logo.jpg';
 import axiosAgregator from "@/server/axiosAgregator.js";
+import router from "@/router/router.js";
 
-const user = ref({
-  username: '',
-  email: '',
-  profilePicture: defaultLogo,
-});
-
-const errorMessage = ref('');
-const successMessage = ref('');
-const router = useRouter();
-
-onMounted(() => {
-  loadUserProfile();
-});
-
-const logout = () => {
-
-  localStorage.clear()
-  router.push('/login').then(() => {
-    location.reload();
-  });
-};
-
-const loadUserProfile = async () => {
-  const response = await axiosAgregator.sendGet("/api/v1/profile");
-
-  if (response.status === 200 && response.data.username) {
-    user.username = response.data.username;
-    console.log( user.username)
-  } else {
-    alert("Сервер тупит");
+export default {
+  data() {
+    return {
+      user: {
+        username: '',
+        email: '',
+        profilePicture: defaultLogo,
+      }
+    }
+  },
+  mounted() {
+    this.loadUserProfile();
+  },
+  methods: {
+    loadUserProfile() {
+      axiosAgregator.sendGet("/api/v1/profile").then(response => {
+        console.log(response.data);
+        this.user.username = response.data.username;
+      });
+    },
+    logout(){
+      localStorage.clear()
+      router.push('/auth').then(() => {
+        location.reload();
+      });
+    }
   }
-};
+}
 </script>
 
 <template>
   <div class="profile-container">
-    <div class="header">
-      <img :src="user.profilePicture" alt="Profile Picture" class="profile-picture"/>
-      <h2>Профиль пользователя {{ user.username}}</h2>
-    </div>
-
-    <div class="form-container">
-      <VaInput v-model="user.username" label="Имя" :placeholder="user.username || 'Введите ваше имя'" />
-      <VaInput v-model="user.email" label="Email" type="email" placeholder="Введите ваш email" />
-
-      <VaButton @click="updateUserData" color="primary">Сохранить изменения</VaButton>
-      <VaButton @click="logout" color="danger">Выйти</VaButton> <!-- Кнопка выхода -->
-
-      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
-      <div v-if="successMessage" class="success-message">{{ successMessage }}</div>
-    </div>
+    <VaCard>
+      <VaImage
+          :src="'https://img.freepik.com/free-icon/person-street-view-symbol_318-1051.jpg?size=626&ext=jpg'"
+          class="h-52"
+      />
+      <VaCardTitle>
+        <h3 class="va-h3">
+          {{ this.user.username }}
+        </h3>
+      </VaCardTitle>
+      <VaCardContent>
+        <VaButton @click="logout" color="danger">Выйти</VaButton> <!-- Кнопка выхода -->
+      </VaCardContent>
+    </VaCard>
   </div>
 </template>
-
 
 
 <style scoped>

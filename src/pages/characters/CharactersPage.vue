@@ -38,7 +38,7 @@
       v-model="this.modalOpened"
   >
     <CharacterListPopup
-        :character-id="this.openedItemId"
+        :character="this.openedItem"
     />
   </VaModal>
 </template>
@@ -47,10 +47,21 @@
 import {defineComponent} from "vue";
 import router from "@/router/router.js";
 import CharacterListPopup from "@/components/character/CharacterListPopup.vue";
+import axiosAgregator from "@/server/axiosAgregator.js";
 
 export default defineComponent({
   components: {
     CharacterListPopup
+  },
+  watch: {
+    selectedItems(){
+      if (this.selectedItems.length > 0) {
+        localStorage.setItem('characterListId', this.selectedItems[0].id);
+      }
+      else{
+        localStorage.removeItem('characterListId');
+      }
+    }
   },
   data() {
     const items = [
@@ -72,14 +83,15 @@ export default defineComponent({
 
     const columns = [
       {key: "name", label: "Имя персонажа", sortable: false},
-      {key: "race", label: "Раса персонажа", sortable: false},
-      {key: "class", label: "Класс персонажа", sortable: false},
+      {key: "race.name", label: "Раса персонажа", sortable: false},
+      {key: "characterClass.name", label: "Класс персонажа", sortable: false},
       {key: "level", label: "Уровень персонажа", sortable: false},
       {key: "actions", label: "Действия", width: '80px'},
     ];
 
     return {
       openedItemId: null,
+      openedItem: null,
       modalOpened: false,
       items,
       columns,
@@ -87,11 +99,20 @@ export default defineComponent({
       selectedItemsEmitted: [],
     };
   },
-
+  mounted() {
+    this.loadData()
+  },
   methods: {
     openModal(id) {
+      console.log(this.items[id])
       this.openedItemId = id;
+      this.openedItem = this.items[id];
       this.modalOpened = true;
+    },
+    loadData(){
+      axiosAgregator.sendGet('/api/v1/character/all').then((response) => {
+        this.items = response.data;
+      })
     },
     toConstructor() {
       router.push('/constructor')

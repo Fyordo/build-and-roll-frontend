@@ -23,7 +23,7 @@ const handleLogin = async () => {
     localStorage.setItem("access_token", response.data.accessToken);
     localStorage.setItem("refresh_token", response.data.refreshToken);
     await loadUserProfile();
-    router.push('/').then(() => {
+    router.push('/profile').then(() => {
       location.reload();
     });
   } else {
@@ -35,11 +35,9 @@ const loadUserProfile = async () => {
   const response = await axiosAgregator.sendGet("/api/v1/profile");
 
   if (response.status === 200 && response.data.username) {
-    //console.log( response.data)
     localStorage.setItem('username', response.data.username);
     localStorage.setItem('userId', response.data.id);
   } else {
-    alert("Сервер тупит");
   }
 };
 
@@ -47,9 +45,14 @@ const loadUserProfile = async () => {
 
 <template>
   <div class="auth-container">
-    <h2>Вход</h2>
-    <VaInput v-model="email" label="Email" type="email" placeholder="Введите ваш email" />
+    <h2 class="va-h2">Вход</h2>
+    <VaInput v-model="email" label="Имя пользователя" type="email" placeholder="Введите ваше имя" />
+    <br>
+    <br>
     <VaInput v-model="password" label="Пароль" type="password" placeholder="Введите ваш пароль" />
+    <br>
+    <br>
+    <br>
 
     <VaButton @click="handleLogin" color="primary">Войти</VaButton>
 

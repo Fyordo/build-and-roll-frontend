@@ -9,6 +9,8 @@ export default {
         if (localStorage.getItem("access_token") !== null){
             headers = {
                 Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
             };
         }
         return await axios
@@ -53,7 +55,8 @@ export default {
                 data,
                 {
                     headers: headers + {
-                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                        "Access-Control-Allow-Origin": "*",
                     },
                 }
             );
@@ -63,6 +66,8 @@ export default {
         if (localStorage.getItem("jwt") !== null){
             headers = {
                 Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
             };
         }
         return await axios

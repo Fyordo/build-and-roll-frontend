@@ -25,7 +25,7 @@ const handleRegister = async () => {
       alert("Регистрация прошла успешно!");
       localStorage.setItem('access_token', response.data.access_token);
       localStorage.setItem('refresh_token', response.data.refresh_token);
-      router.push('/').then(() => {
+      router.push('/auth').then(() => {
         location.reload();
       });
     } else {
@@ -39,10 +39,14 @@ const handleRegister = async () => {
 
 <template>
   <div class="auth-container">
-    <h2>Регистрация</h2>
-    <VaInput v-model="email" label="Email" type="email" placeholder="Введите ваш email" />
+    <h2 class="va-h2">Регистрация</h2>
+    <VaInput v-model="email" label="Имя пользователя" type="email" placeholder="Введите ваше имя" />
+    <br>
+    <br>
     <VaInput v-model="password" label="Пароль" type="password" placeholder="Введите ваш пароль" />
-
+    <br>
+    <br>
+    <br>
 
     <VaButton @click="handleRegister" color="primary" class="register-button">Зарегистрироваться</VaButton>
 

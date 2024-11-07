@@ -11,8 +11,8 @@ const breakpoints = useBreakpoint()
 
 const sidebarRoutes = [
   {title: "Листы персонажей", link: "/characters", icon: "dataset", active: isAuth},
-  {title: "Заклинания", link: "/spells", icon: "star", active: isAuth},
-  {title: "Оружие", link: "/weapons", icon: "colorize", active: isAuth},
+  {title: "Заклинания", link: "/spells", icon: "star", active: true},
+  {title: "Оружие", link: "/weapons", icon: "colorize", active: true},
   {title: "Комната", link: "/room", icon: "house", active: isAuth},
 ];
 
@@ -74,7 +74,7 @@ onMounted(() => {
     <template #left>
       <VaSidebar
           :minimized="!showSidebar"
-          minimized-width="60px">
+          minimized-width="0px">
         <SidebarItem v-for="item in sidebarRoutes" :title="item.title" :link="item.link" :icon="item.icon"
                      :active="item.active"/>
         <VaSpacer/>

@@ -25,6 +25,8 @@
           ]"
             required-mark
             :options="raceOptions"
+            :text-by="(option) => option.name"
+            :track-by-by="(option) => option.id"
         />
       </template>
       <template #step-content-2>
@@ -36,6 +38,8 @@
           ]"
             required-mark
             :options="classOptions"
+            :text-by="(option) => option.name"
+            :track-by-by="(option) => option.id"
         />
       </template>
       <template #step-content-3>
@@ -50,14 +54,42 @@
                 color="#0FB58D"
             />
           </div>
-          <VaDivider />
+          <VaDivider/>
         </div>
       </template>
       <template #step-content-4>
-        <VaOptionList
-            v-model="model.spells"
-            :options="spellsOptions.map(e => e.title)"
-        />
+        <div class="grid sm:grid-cols-2 md:grid-cols-5 gap-6 mb-6">
+          <VaInput
+              v-model="spellsFilter"
+              class="sm:col-span-2 md:col-span-3"
+              placeholder="Filter..."
+          />
+          <br>
+        </div>
+
+        <VaDataTable
+            v-model="selectedSpells"
+            :items="spellsOptions"
+            :columns="spellsColumns"
+            :per-page="spellsPerPage"
+            :current-page="spellsCurrentPage"
+            selectable
+            :filter="spellsFilter"
+            @filtered="filtered = $event.items"
+        >
+          <template #bodyAppend>
+            <tr>
+              <td colspan="6">
+                <div class="flex justify-center mt-4">
+                  <VaPagination
+                      v-model="spellsCurrentPage"
+                      :pages="pages"
+                  />
+                </div>
+              </td>
+            </tr>
+          </template>
+        </VaDataTable>
       </template>
     </VaStepper>
   </VaForm>
@@ -67,8 +99,35 @@
 import {defineComponent} from "vue";
 import {ref} from 'vue';
 import {useForm, defineVaStepperSteps} from 'vuestic-ui'
+import axiosAgregator from "@/server/axiosAgregator.js";
 
 export default defineComponent({
+  mounted() {
+    this.loadData();
+  },
+  methods: {
+    saveList(){
+      // TODO Сохранение листа персонажа
+    },
+    loadData() {
+      axiosAgregator.sendGet("/api/v1/lib/race/all").then(res => {
+        this.raceOptions = res.data.map(raceOption => {
+          return {
+            id: raceOption.id,
+            name: raceOption.name,
+          }
+        });
+      })
+      axiosAgregator.sendGet("/api/v1/lib/class/all").then(res => {
+        this.classOptions = res.data.map(classOptions => {
+          return {
+            id: classOptions.id,
+            name: classOptions.name,
+          }
+        });
+      })
+    }
+  },
   data() {
     const currentStep = ref(0);
 
@@ -104,37 +163,13 @@ export default defineComponent({
         level: 0,
       }
     ];
-    const model = ref({name: '', race: '', class: '', stats: stats, spells: []})
+    const model = ref({name: '', race: {}, class: {}, stats: stats, spells: []})
 
     const {validate} = useForm('stepForm')
 
-    const raceOptions = [
-        "Человек",
-        "Эльф",
-        "Орк",
-    ];
+    const raceOptions = [];
 
-    const classOptions = [
-      "Колдун",
-      "Клирик",
-      "Мечник",
-      "Лучник",
-    ];
-
-    const spellsOptions = [
-      {
-        id: 1,
-        title: "Заклинание 1"
-      },
-      {
-        id: 2,
-        title: "Заклинание 2"
-      },
-      {
-        id: 3,
-        title: "Заклинание 3"
-      }
-    ];
+    const classOptions = [];
 
     const steps = ref(defineVaStepperSteps([
       {
@@ -151,6 +186,9 @@ export default defineComponent({
       {
         label: 'Выберите класс', beforeLeave: (step) => {
           step.hasError = !validate()
+          axiosAgregator.sendGet(`/api/v1/lib/spell/all?classId=${this.model.class.id}`).then(res => {
+            this.spellsOptions = res.data;
+          })
         }
       },
       {
@@ -162,29 +200,51 @@ export default defineComponent({
       {
         label: 'Выберите заклинания', beforeLeave: (step) => {
           step.hasError = !validate()
+          this.saveList()
         }
       },
     ]))
+
+    const spellsColumns = [
+      { key: "name", label: "Название", sortable: true },
+      { key: "level", label: "Уровень", sortable: true },
+      { key: "school", label: "Школа", sortable: true },
+    ];
     return {
       currentStep,
       model,
       steps,
       raceOptions,
       classOptions,
-      spellsOptions,
-      stats
+      stats,
+
+      selectedSpells: [],
+      spellsOptions: [],
+      spellsFilter: "",
+      spellsColumns: spellsColumns,
+      spellsPerPage: 10,
+      spellsPage: 1,
+      spellsCurrentPage: 1,
+      filtered: [],
     };
+  },
+  computed: {
+    pages() {
+      return this.spellsPerPage && this.spellsPerPage !== 0
+          ? Math.ceil(this.spellsOptions.length / this.spellsPerPage)
+          : this.spellsOptions.length;
+    },
   },
 });
 </script>
 
 <style scoped>
-.title-and-level{
+.title-and-level {
   display: flex;
   justify-content: space-between;
 }
 
-.stats-selector{
+.stats-selector {
   max-width: 500px;
 }
 </style>

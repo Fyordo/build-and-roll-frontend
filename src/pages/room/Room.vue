@@ -54,7 +54,7 @@
           <td>{{ user.username }}</td>
           <td>{{ 10 }}</td>
           <td>{{ 1 }}</td>
-          <td>{{ user.id == room.owner.id ? "Dungeon Master" : "Игрок" }}</td>
+          <td>{{ user.username === this.room.owner.username ? "Dungeon Master" : "Игрок" }}</td>
           <td>
             <VaButton
                 preset="plain"
@@ -140,13 +140,14 @@ export default {
 
       await this.addUser(authUser);
       this.room = response.data;
-      
+
     },
 
     enablePusher(id) {
       channel = pusher.subscribe(`room_${id}_channel`)
       channel.bind('USER_JOINED', async (data) => {
         const user = data.user;
+
         this.addUser(user);
         if (user.username !== this.authUsername) {
           this.addNotification(`${user.username} подключился к комнате`);

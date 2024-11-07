@@ -61,9 +61,11 @@ export default {
 
     async joinRoom(roomId) {
       const userId = localStorage.getItem('userId');
+      const characterListId = localStorage.getItem("characterListId");
       await axiosAgregator.sendPost("/api/v1/room/add_user", {
         userId: userId,
         roomId: roomId,
+        characterListId: characterListId
       });
       this.$router.push(`/room/${roomId}`); // Используем id для перехода в нужную комнату
     },

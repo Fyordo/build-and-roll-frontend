@@ -1,5 +1,5 @@
 <script>
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import axiosAgregator from "@/server/axiosAgregator.js";
 
 export default defineComponent({
@@ -21,12 +21,23 @@ export default defineComponent({
     }
   },
   methods: {
-    loadData(){
+    addToList(row) {
+      const item = this.items[row]
+      const selectedListId = localStorage.getItem("characterListId")
+      if (selectedListId === undefined) {
+        return;
+      }
+      axiosAgregator.sendPost("/api/v1/...", {
+        weaponId: item.id,
+        characterListId: selectedListId
+      })
+    },
+    loadData() {
       let path = `/api/v1/lib/weapon?page=${this.currentPage}&perPage=${this.perPage}`;
-      if (this.selectedType !== undefined){
+      if (this.selectedType !== undefined) {
         path += `&type=${this.selectedType}`;
       }
-      if (this.filter.length > 0){
+      if (this.filter.length > 0) {
         path += `&search=${this.filter}`;
       }
       axiosAgregator.sendGet(path)
@@ -39,9 +50,10 @@ export default defineComponent({
     const items = [];
 
     const columns = [
-      { key: "name", label: "Название", sortable: false },
-      { key: "type", label: "Тип оружия", sortable: false },
-      { key: "actions", label: "Дополнительная информация", sortable: false, width: 80 },
+      {key: "name", label: "Название", width: '150px', sortable: false},
+      {key: "type", label: "Тип оружия", width: '150px', sortable: false},
+      {key: "openInfo", label: "Дополнительная информация", sortable: false, width: 80},
+      {key: "actions", label: "Добавить в выбранный лист", width: '80px'},
     ];
 
     const perPage = 10;
@@ -100,15 +112,22 @@ export default defineComponent({
       :items="this.items"
       :columns="this.columns"
   >
-    <template #cell(actions)="{ row, isExpanded }">
+    <template #cell(openInfo)="{ row, isExpanded }">
       <VaButton
           :icon="isExpanded ? 'va-arrow-up': 'va-arrow-down'"
           preset="secondary"
           class="w-full"
           @click="row.toggleRowDetails()"
       >
-        {{ isExpanded ? 'Закрыть': 'Открыть' }}
+        {{ isExpanded ? 'Закрыть' : 'Открыть' }}
       </VaButton>
+    </template>
+    <template #cell(actions)="{ row, isExpanded }">
+      <VaButton
+          preset="plain"
+          icon="add"
+          @click="this.addToList(rowIndex)"
+      />
     </template>
 
     <template #expandableRow="{ rowData }">

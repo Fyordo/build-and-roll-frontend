@@ -1,29 +1,23 @@
-# build-and-roll-frontend
+# Build&Roll (Frontend)
+Проект представляет собой приложение для создания интерактивного листа персонажа для ролевой игры Dungeons & Dragons (D&D). Приложение создавалось для облегчения процесса создания и ведения персонажей в D&D, делая его доступным и приятным для всех игроков, даже если они не обладают навыками арифметики.
 
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
+## Сборка и запуск (локально)
+Для установления зависимостей необходимо ввести команду:
+```console
+npm i
 ```
 
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
+Для запуска приложения необходимо ввести команду:
+```console
+vite
 ```
 
-### Compile and Minify for Production
+Сервер будет доступен по адресу: http://localhost:5173.
 
-```sh
-npm run build
+## Сборка и запуск (докеп)
+Докер-контейнер запускается с помошью команды:
+```console
+make deploy
 ```
+
+Сервер будет доступен по адресу: http://localhost:8079.
